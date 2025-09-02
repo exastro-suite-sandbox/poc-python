@@ -1,0 +1,92 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/dotnet
+{
+	"name": "POC (Python)",
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	"dockerComposeFile": [
+		"./docker-compose.yml"
+	],
+	"service": "poc-python",
+	"customizations": {
+		"vscode": {
+			"settings": {
+				"terminal.integrated.profiles.linux": {
+					"bash": {
+						"path": "/bin/bash"
+					}
+				},
+				"terminal.integrated.defaultProfile.linux": "bash",
+				"git.allowNoVerifyCommit": true,
+
+				// python extension setting
+				"python.interpreterPath": "/usr/bin/python3",
+				"python.defaultInterpreterPath": "/usr/bin/python3",
+
+				"python.linting.pylintEnabled": false,
+				"python.linting.flake8Enabled": true,
+
+				"python.linting.lintOnSave": true,
+
+				"python.linting.flake8Args": [
+					"--ignore=W293, W504",
+					"--max-line-length=250",
+					"--max-complexity=20"
+				],
+
+				"flake8.enabled": false,
+				"flake8.args": [
+					"--ignore=W293, W504",
+					"--max-line-length=250",
+					"--max-complexity=20"
+				],
+
+				"python.formatting.provider": "autopep8",
+
+				"python.formatting.autopep8Args": [
+					"--aggressive", "--aggressive"
+				]
+			},
+			"extensions": [
+				"donjayamanne.python-extension-pack",
+				"ms-python.vscode-pylance",
+				"ms-vscode.references-view",
+				"ms-python.flake8",
+				"ms-python.black-formatter",
+				"eamodio.gitlens",
+				"mhutchie.git-graph",
+				"redhat.vscode-yaml",
+				"hediet.vscode-drawio",
+				"oderwat.indent-rainbow",
+				"aaron-bond.better-comments",
+				"mechatroner.rainbow-csv",
+				"ryu1kn.partial-diff",
+				"pkief.material-icon-theme",
+				"mitchdenny.ecdc",
+				"ms-vsliveshare.vsliveshare"
+			]
+		}
+	},
+	"forwardPorts": [],
+	"workspaceFolder": "/workspace",
+	"overrideCommand": true
+
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	// "features": {},
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [5000, 5001],
+	// "portsAttributes": {
+	//		"5001": {
+	//			"protocol": "https"
+	//		}
+	// }
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	// "postCreateCommand": "dotnet restore",
+
+	// Configure tool-specific properties.
+	// "customizations": {},
+
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "root"
+}
