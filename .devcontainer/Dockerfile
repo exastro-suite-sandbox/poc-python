@@ -9,17 +9,42 @@ ARG APP_PATH
 
 WORKDIR $APP_PATH
 
+# ensure local pypy3 is preferred over distribution pypy3
+ENV PATH /opt/pypy/bin:$PATH
+
+# Python 3.11.13
+ENV PYPY_VERSION 7.3.20
+
 RUN --mount=type=secret,id=host_certificate_file,dst=/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem \
-    dnf install -y \
+    set -eux \
+&&  dnf install -y \
     langpacks-en \
     wget \
     unzip \
     gcc \
-    python3.11 \
-    python3.11-devel \
-    python3.11-pip \
-&&  alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 100 \
-&&  alternatives --set python3 /usr/bin/python3.11 \
+    bzip2 \
+    # python3.11 \
+    # python3.11-devel \
+    # python3.11-pip
+#     alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 100 \
+# &&  alternatives --set python3 /usr/bin/python3.11 \
+&&  wget -O pypy.tar.bz2 https://downloads.python.org/pypy/pypy3.11-v7.3.20-linux64.tar.bz2 --progress=dot:giga \
+&&  mkdir /opt/pypy \
+&&  tar -xjC /opt/pypy --strip-components=1 -f pypy.tar.bz2 \
+&&  find /opt/pypy/lib* -depth -type d -a \( -name test -o -name tests \) -exec rm -rf '{}' + \
+&&  rm pypy.tar.bz2 \
+&&  alternatives --install /usr/bin/python3 python3 /opt/pypy/bin/python3.11 100 \
+&&  alternatives --set python3 /opt/pypy/bin/python3.11 \
+&&  alternatives --install /usr/bin/pip3.11 pip3.11 /opt/pypy/bin/pip3.11 100 \
+&&  alternatives --set pip3.11 /opt/pypy/bin/pip3.11 \
+&&  python3 -m ensurepip \
+&&  pip3.11 install --disable-pip-version-check --no-cache-dir --no-compile 'wheel<0.46' \
+&& 	find /opt/pypy -depth \
+		\( \
+			\( -type d -a \( -name test -o -name tests \) \) \
+			-o \
+			\( -type f -a \( -name '*.pyc' -o -name '*.pyo' \) \) \
+		\) -exec rm -rf '{}' + \
 &&  pip3.11 install poetry==1.8.4 \
 &&  poetry config virtualenvs.create false \
 &&  groupadd $GROUPNAME \
